@@ -25,6 +25,7 @@ import warnings
 from optparse import OptionParser
 
 parser = OptionParser()
+
 parser.add_option( "--log-file",  dest="logfile", default=None, help="Log to file.", metavar="FILE" )
 parser.add_option( "--debug",     dest="debug", action="store_true", default=False, help="Enable debug logs." )
 
@@ -42,7 +43,6 @@ except ImportError:
 else:
     mpl.rcParams['backend'] = 'Qt5Agg'
 
-
 from opensnitch.version import VERSION
 
 logging.basicConfig( format   = '[%(asctime)s] (%(levelname)s) %(message)s',
@@ -55,20 +55,19 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 warnings.filterwarnings("ignore", category=RuntimeWarning, module="gtk")
 
-from opensnitch.snitch import Snitch
+from opensnitch.server import Server
 
 def main():
-    snitch = Snitch()
+    svr = Server()
 
     try:
-        logging.info( "OpenSnitch v%s running with pid %d." % ( VERSION, os.getpid() ) )
-        snitch.start()
+        logging.info( "OpenSnitch Server v%s running with pid %d." % ( VERSION, os.getpid() ) )
+        svr.start()
     except KeyboardInterrupt, e:
         pass
 
     logging.info( "Quitting ..." )
-
-    snitch.stop()
+    svr.stop()
 
 if __name__ == '__main__':
     main()

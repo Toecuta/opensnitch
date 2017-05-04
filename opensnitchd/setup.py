@@ -25,7 +25,7 @@ try:
 except:
   long_description = 'OpenSnitch - An application level firewall for GNU/Linux.'
 
-setup( name                 = 'opensnitch',
+setup( name                 = 'opensnitchd',
        version              = VERSION,
        description          = long_description,
        long_description     = long_description,
@@ -33,8 +33,7 @@ setup( name                 = 'opensnitch',
        author_email         = 'evilsocket@gmail.com',
        url                  = 'http://www.github.com/evilsocket/opensnitch',
        packages             = find_packages(),
-       scripts              = [ 'bin/opensnitch' ],
-       package_data         = {'': ['*.ui']},
+       scripts              = [ 'bin/opensnitchd' ],
        license              = 'GPL',
        zip_safe             = False,
        install_requires     = [ 'scapy', 'dpkt', 'NetfilterQueue', 'psutil' ]

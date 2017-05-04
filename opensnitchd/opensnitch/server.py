@@ -23,13 +23,12 @@ from socket import AF_INET, AF_INET6, inet_ntoa
 from threading import Lock
 from scapy.all import *
 
-from opensnitch.ui import QtApp
 from opensnitch.connection import Connection
 from opensnitch.dns import DNSCollector
 from opensnitch.rule import Rule, Rules
 from opensnitch.procmon import ProcMon
 
-class Snitch:
+class Server:
     IPTABLES_RULES = ( # Get DNS responses
                        "INPUT --protocol udp --sport 53 -j NFQUEUE --queue-num 0 --queue-bypass",
                        # Get connection packets
@@ -44,7 +43,6 @@ class Snitch:
         self.dns     = DNSCollector()
         self.q       = NetfilterQueue()
         self.procmon = ProcMon()
-        self.qt_app  = QtApp()
 
         self.q.bind( 0, self.pkt_callback, 1024 * 2 )
 
@@ -79,7 +77,8 @@ class Snitch:
                     logging.debug( "Could not detect process for connection." )
 
                 else:
-                    verd = self.get_verdict( conn )
+                    logging.info( "TODO: Get verdict from IPC." )
+                #    verd = self.get_verdict( conn )
 
         except Exception, e:
             logging.exception( "Exception on packet callback:" )
@@ -93,7 +92,7 @@ class Snitch:
             pkt.accept()
 
     def start(self):
-        for r in Snitch.IPTABLES_RULES:
+        for r in Server.IPTABLES_RULES:
             logging.debug( "Applying iptables rule '%s'" % r )
             os.system( "iptables -I %s" % r )
 
@@ -101,11 +100,10 @@ class Snitch:
             self.procmon.enable()
             self.procmon.start()
 
-        self.qt_app.run()
         self.q.run()
 
     def stop(self):
-        for r in Snitch.IPTABLES_RULES:
+        for r in Server.IPTABLES_RULES:
             logging.debug( "Deleting iptables rule '%s'" % r )
             os.system( "iptables -D %s" % r )
 
